@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>택배 아카데미 랜딩페이지</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Noto Sans KR', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      transition: background-color 1.5s ease-in-out, color 1.5s ease-in-out;
+      background-color: #001F3F;
+      color: white;
+    }
+
+    #container {
+      position: relative;
+    }
+
+    .panel {
+      height: 300vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 320px 20px 280px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel * {
+      transition: color 0.6s ease;
+    }
+
+    .title, .desc {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.4s ease, transform 1.4s ease;
+    }
+
+    .show {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    .title {
+      font-size: 42px;
+      margin-bottom: 60px;
+      line-height: 1.7;
+    }
+
+    .desc {
+      font-size: 24px;
+      max-width: 720px;
+      line-height: 2.4;
+      margin-bottom: 60px;
+    }
+
+    .cta-btn {
+      margin-top: 24px;
+      padding: 18px 36px;
+      font-size: 20px;
+      border: 2px solid currentColor;
+      background: transparent;
+      color: inherit;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .cta-btn:hover {
+      background: currentColor;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="panel" data-bg="#001F3F" data-color="#ffffff">
+      <h2 class="title">택배, 지금 시작해도 괜찮을까요?</h2>
+      <p class="desc">정가 38만원 → 지금 신청 시 <strong>100% 무료</strong><br>2주면 충분합니다. 실전으로 바로 연결됩니다.</p>
+      <a href="#" class="cta-btn" target="_blank">무료 수강 신청</a>
+    </div>
+
+    <div class="panel" data-bg="#004AAD" data-color="#ffffff">
+      <h2 class="title">차는 샀지만, 일은 없었습니다.</h2>
+      <p class="desc">허위 광고, 계약 사기, 월 임대비 100만원...<br><strong>시작도 전에 빚부터 생겼습니다.</strong></p>
+    </div>
+
+    <div class="panel" data-bg="#FFE87C" data-color="#111111">
+      <h2 class="title">그래서, 우리는 다릅니다.</h2>
+      <p class="desc">모벤티스 아카데미는<br><strong>투명한 계약 + 수익 실현 구조</strong>를<br>실제 사례 중심으로 교육합니다.</p>
+    </div>
+
+    <div class="panel" data-bg="#002d6e" data-color="#ffffff">
+      <h2 class="title">실제 수강생 후기</h2>
+      <p class="desc">홍길동 님: 2주 수료 → <strong>월 370만원</strong><br>김00 님: 교육 3일 만에 현장 배치<br>※ 네이버 후기 확인 가능</p>
+    </div>
+
+    <div class="panel" data-bg="#003366" data-color="#ffffff">
+      <h2 class="title">2주 수업 구성</h2>
+      <p class="desc">이론 + 계약 구조 분석 + 현장 시뮬레이션<br>오전반 / 야간반 선택 가능 (오프라인·줌 병행)</p>
+    </div>
+
+    <div class="panel" data-bg="#001F3F" data-color="#ffffff">
+      <h2 class="title">지금이 시작할 타이밍입니다</h2>
+      <p class="desc">신청자 전원 무료 수강 혜택<br><strong>지금 바로 상담 받고 시작하세요</strong></p>
+      <a href="#" class="cta-btn" target="_blank">30초 무료 상담 신청</a>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+    const panels = gsap.utils.toArray(".panel");
+
+    panels.forEach((panel, i) => {
+      const bgColor = panel.getAttribute("data-bg") || "#fff";
+      const textColor = panel.getAttribute("data-color") || "#000";
+
+      ScrollTrigger.create({
+        trigger: panel,
+        start: "top center",
+        end: "bottom center",
+        scrub: 1,
+        onUpdate: self => applyColors(panel, bgColor, textColor),
+        markers: false
+      });
+
+      ScrollTrigger.create({
+        trigger: panel,
+        start: "top top",
+        end: "bottom bottom",
+        pin: true,
+        pinSpacing: true,
+        scrub: 1.5
+      });
+
+      ScrollTrigger.create({
+        trigger: panel,
+        start: "top center",
+        toggleActions: "play none none none",
+        onEnter: () => {
+          panel.querySelector(".title")?.classList.add("show");
+          panel.querySelector(".desc")?.classList.add("show");
+        }
+      });
+    });
+
+    function applyColors(panel, bgColor, textColor) {
+      document.body.style.backgroundColor = bgColor;
+      document.body.style.color = textColor;
+
+      panel.querySelectorAll(".title, .desc, .cta-btn").forEach(el => {
+        el.style.color = textColor;
+        if (el.classList.contains("cta-btn")) {
+          el.style.borderColor = textColor;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
