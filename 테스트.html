@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>택배 아카데미 - 택배 전문가 양성 교육원</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-y: auto;
+        }
+
+        /* ===== 네비게이션 ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(30px);
+            z-index: 1000;
+            padding: 1rem 5%;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ===== 메인 컨테이너 ===== */
+        .main-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+
+        /* 각 섹션별 배경색 */
+        .bg-home { 
+            background: linear-gradient(rgba(0, 84, 167, 0.3), rgba(0, 84, 167, 0.3)), url('https://i.imgur.com/GpXgY2Z.jpeg');
+            background-size: 120%;
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+        .bg-who { background: #4A90E2; }
+        .bg-first-timer { background: #28a745; }
+        .bg-low-income { background: #059669; }
+        .bg-job-seeker { background: #FFB300; }
+        .bg-pro-driver { background: #4A90E2; }
+        .bg-curriculum { background: #1e40af; }
+        .bg-contact { background: #0e2178; }
+
+        /* ===== 고정된 우측 비주얼 ===== */
+        .fixed-visual {
+            position: fixed;
+            top: 50%;
+            right: 5%;
+            transform: translateY(-50%);
+            z-index: 999;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(30px);
+            border-radius: 30px;
+            height: 480px;
+            width: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 5rem;
+            font-weight: 300;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            transition: all 0.5s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ===== 네비게이션 도트 ===== */
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .nav-dot.active,
+        .nav-dot:hover {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* ===== 스크롤 인디케이터 ===== */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            animation: bounce 3s infinite;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { 
+                transform: translateX(-50%) translateY(0); 
+            }
+            40% { 
+                transform: translateX(-50%) translateY(-10px); 
+            }
+            60% { 
+                transform: translateX(-50%) translateY(-5px); 
+            }
+        }
+
+        .content-slide {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 0;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        #home .content-wrapper,
+        #contact .content-wrapper {
+            grid-template-columns: 1fr;
+            text-align: center;
+            color: white;
+        }
+
+        .scroll-section .content-wrapper {
+            grid-template-columns: 1fr;
+            max-width: 600px;
+            margin-left: 120px;
+            margin-right: auto;
+        }
+
+        .section-text h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .section-text h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: white;
+            position: relative;
+        }
+
+        .section-text h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .section-text h3 {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .section-text p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .section-text ul {
+            margin-left: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .section-text ul li {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+
+        .content-slide:not(#home):not(#contact) .section-text,
+        .scroll-section .section-text {
+            text-align: left;
+        }
+
+        .course-info {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .contact-cta {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .contact-cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.2rem 2.5rem;
+            background: #ffffff;
+            color: #444444;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-cta-button:hover {
+            background: #f8f9ff;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            .fixed-visual {
+                height: 350px;
+                width: 350px;
+                font-size: 4rem;
+                right: 3%;
+            }
+            
+            .scroll-section .content-wrapper {
+                margin-left: 0;
+                padding-left: 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fixed-visual {
+                display: none !important;
+            }
+
+            .scroll-section .content-wrapper {
+                max-width: 100%;
+                margin-left: -20px !important;
+                margin-right: auto;
+            }
+            
+            .section-text h1 { 
+                font-size: 2.2rem; 
+                line-height: 1.3;
+            }
+            
+            .section-text h2 { 
+                font-size: 1.8rem; 
+                line-height: 1.4;
+            }
+            
+            .section-text h3 {
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .section-text p { 
+                font-size: 0.95rem; 
+                line-height: 1.7;
+                margin-bottom: 1.5rem;
+            }
+            
+            .content-wrapper { 
+                grid-template-columns: 1fr; 
+                gap: 2rem; 
+                padding: 0 1.5rem;
+            }
+            
+            .content-slide {
+                padding: 80px 0;
+            }
+            
+            .nav-links { 
+                display: none; 
+            }
+            
+            .navbar {
+                padding: 0.8rem 3%;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+            
+            .nav-dots { 
+                right: 1rem; 
+                gap: 0.8rem;
+            }
+            
+            .nav-dot {
+                width: 10px;
+                height: 10px;
+            }
+            
+            .course-info {
+                padding: 1.5rem;
+                margin-top: 1.5rem;
+            }
+            
+            .course-details { 
+                grid-template-columns: 1fr; 
+                gap: 0.8rem;
+            }
+            
+            .detail-item {
+                font-size: 0.85rem;
+            }
+            
+            .contact-cta-button {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                min-height: 44px;
+            }
+            
+            .scroll-indicator {
+                bottom: 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .section-text h1 { 
+                font-size: 1.9rem; 
+            }
+            
+            .section-text h2 { 
+                font-size: 1.6rem; 
+            }
+            
+            .section-text h3 {
+                font-size: 1rem;
+            }
+            
+            .section-text p { 
+                font-size: 0.9rem; 
+            }
+            
+            .content-wrapper {
+                padding: 0 1rem;
+            }
+            
+            .navbar {
+                padding: 0.8rem 2%;
+            }
+            
+            .logo {
+                font-size: 1.3rem;
+            }
+            
+            .course-info {
+                padding: 1.2rem;
+            }
+            
+            .contact-cta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .contact-cta-button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== 네비게이션 바 ===== -->
+    <div class="navbar">
+        <div class="nav-content">
+            <div class="logo">📦 택배 아카데미</div>
+            <div class="nav-links">
+                <a href="#home" class="active">홈</a>
+                <a href="#who">대상자</a>
+                <a href="#first-timer">초보자</a>
+                <a href="#low-income">소득증대</a>
+                <a href="#job-seeker">구직자</a>
+                <a href="#pro-driver">전문가</a>
+                <a href="#curriculum">교육과정</a>
+                <a href="#contact">시작하기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 고정된 우측 비주얼 ===== -->
+    <div class="fixed-visual" id="fixed-visual">🤔</div>
+
+    <div class="main-container bg-home" id="main-container">
+        <!-- 홈 섹션 -->
+        <div class="content-slide" id="home">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h1>택배 그 이상의 가치,<br>전문성으로 완성하다</h1>
+                    <h3>사기 없는 투명 계약 · 체계적 교육 · 바로 수익 실현</h3>
+                    <p>단순한 배송을 넘어 전문 기술과 노하우로</p>
+                    <p>안정적이고 지속가능한 택배 비즈니스의 길을 제시합니다</p>
+                    <p>믿을 수 있는 파트너와 함께 성공을 만들어가세요</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHO 섹션 -->
+        <div class="content-slide scroll-section" id="who" data-visual="🤔">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>🔍 WHO</h2>
+                    <h3>어떤분들이 택배 아카데미를 찾나요?</h3>
+                    <p>다양한 배경의 분들이 새로운 출발을 위해 택배업을 시작하고 계십니다.</p>
+                    <p>여러분의 상황에 맞는 맞춤형 교육을 제공합니다.</p>
+                    <div class="course-info">
+                        <div class="course-details">
+                            <div class="detail-item">👥 모든 연령대 환영</div>
+                            <div class="detail-item">📚 경험 무관</div>
+                            <div class="detail-item">🎯 맞춤형 교육</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 첫 시작 섹션 -->
+        <div class="content-slide scroll-section" id="first-timer" data-visual="🎓">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>🌱 첫 시작</h2>
+                    <h3>택배를 처음 하시는 분</h3>
+                    <p>아무것도 모르는 상태에서 시작해도 괜찮습니다.</p>
+                    <p>기초부터 차근차근 알려드립니다.</p>
+                    <div class="course-info">
+                        <div class="course-details">
+                            <div class="detail-item">📖 기초 교육 완벽 제공</div>
+                            <div class="detail-item">🎯 실전 위주 학습</div>
+                            <div class="detail-item">👨‍🏫 전담 멘토 배정</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 수입 증가 섹션 -->
+        <div class="content-slide scroll-section" id="low-income" data-visual="📊">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>💰 수입 증가</h2>
+                    <h3>월 소득이 낮아 고민하시는 분</h3>
+                    <p>현재 수입에 만족하지 못하시는 분들을 위한 특별한 기회입니다.</p>
+                    <p>체계적인 교육으로 안정적인 고수익을 보장합니다.</p>
+                    <div class="course-info">
+                        <div class="course-details">
+                            <div class="detail-item">📈 수익 증대 노하우</div>
+                            <div class="detail-item">⏰ 3개월 완성 코스</div>
+                            <div class="detail-item">✅ 성과 보장 시스템</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 새로운 기회 섹션 -->
+        <div class="content-slide scroll-section" id="job-seeker" data-visual="🎯">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>🚪 새로운 기회</h2>
+                    <h3>구직이 힘드신 분</h3>
+                    <p>나이나 경력 때문에 취업이 어려우신 분들에게 새로운 길을 제시합니다.</p>
+                    <p>누구나 시작할 수 있는 자립형 비즈니스입니다.</p>
+                    <div class="course-info">
+                        <div class="course-details">
+                            <div class="detail-item">🚫 나이 제한 없음</div>
+                            <div class="detail-item">⚡ 즉시 시작 가능</div>
+                            <div class="detail-item">🏆 자립형 사업</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 전문가 업그레이드 섹션 -->
+        <div class="content-slide scroll-section" id="pro-driver" data-visual="⚡">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>🚛 전문가 업그레이드</h2>
+                    <h3>기사님들 중 정보가 필요하신 분</h3>
+                    <p>이미 택배 일을 하고 계시지만 더 나은 조건과 수익을 원하시는 분들을 위한 과정입니다.</p>
+                    <div class="course-info">
+                        <div class="course-details">
+                            <div class="detail-item">📋 계약 재검토 서비스</div>
+                            <div class="detail-item">🔧 효율성 극대화</div>
+                            <div class="detail-item">🎯 수익 최적화</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 교육과정 섹션 -->
+        <div class="content-slide scroll-section" id="curriculum" data-visual="🏆">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>📚 완벽한 교육</h2>
+                    <h3>택배 기초부터 지입 사기 당하지 않는 법, 현직 전문가의 고소득 노하우까지 알려 드립니다</h3>
+                    <p>15년간 축적된 노하우와 검증된 교육 시스템으로</p>
+                    <p>여러분을 택배 전문가로 만들어드립니다.</p>
+                    <div class="course-info">
+                        <h3 style="color: white; margin-bottom: 1rem;">📋 교육 내용</h3>
+                        <ul>
+                            <li>🛡️ 지입 사기 예방법 및 대처법</li>
+                            <li>📖 택배 업무 기초부터 심화까지</li>
+                            <li>🤝 유리한 계약 체결 노하우</li>
+                            <li>📊 세무 관리 및 절세 전략</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 연락처 섹션 -->
+        <div class="content-slide" id="contact">
+            <div class="content-wrapper">
+                <div class="section-text">
+                    <h2>택배 아카데미가 여러분과 함께 하겠습니다</h2>
+                    <h3>전문적인 택배 교육과 투명한 운영으로 여러분의 성공을 함께 만들어갑니다</h3>
+                    <p>지금 바로 시작하세요!</p>
+                    
+                    <div class="contact-cta">
+                        <a href="https://www.logis-academy.co.kr/" target="_blank" class="contact-cta-button">
+                            홈페이지 바로가기
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 네비게이션 도트 ===== -->
+    <div class="nav-dots">
+        <div class="nav-dot active" data-target="home"></div>
+        <div class="nav-dot" data-target="who"></div>
+        <div class="nav-dot" data-target="first-timer"></div>
+        <div class="nav-dot" data-target="low-income"></div>
+        <div class="nav-dot" data-target="job-seeker"></div>
+        <div class="nav-dot" data-target="pro-driver"></div>
+        <div class="nav-dot" data-target="curriculum"></div>
+        <div class="nav-dot" data-target="contact"></div>
+    </div>
+
+    <!-- ===== 스크롤 인디케이터 ===== -->
+    <div class="scroll-indicator">⬇ scroll</div>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.content-slide');
+            const mainContainer = document.getElementById('main-container');
+            const navDots = document.querySelectorAll('.nav-dot');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const scrollIndicator = document.querySelector('.scroll-indicator');
+            const fixedVisual = document.getElementById('fixed-visual');
+
+            // 스크롤 이벤트로 배경 변경
+            function checkScroll() {
+                const scrollPos = window.scrollY + window.innerHeight / 2;
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const top = rect.top + window.scrollY;
+                    const bottom = top + rect.height;
+                    
+                    if (scrollPos >= top && scrollPos <= bottom) {
+                        const sectionId = section.id;
+                        
+                        // 배경 변경
+                        mainContainer.className = `main-container bg-${sectionId}`;
+                        
+                        // 비주얼 변경
+                        if (section.classList.contains('scroll-section')) {
+                            const visual = section.getAttribute('data-visual');
+                            if (visual) {
+                                fixedVisual.textContent = visual;
+                                fixedVisual.style.opacity = '1';
+                            }
+                        } else {
+                            fixedVisual.style.opacity = '0';
+                        }
+                        
+                        // 스크롤 인디케이터 제어
+                        if (sectionId === 'contact') {
+                            scrollIndicator.style.opacity = '0';
+                        } else {
+                            scrollIndicator.style.opacity = '1';
+                        }
+                        
+                        // 네비게이션 도트 활성화
+                        navDots.forEach(dot => {
+                            if (dot.dataset.target === sectionId) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                        
+                        // 네비게이션 링크 활성화
+                        navLinks.forEach(link => {
+                            if (link.getAttribute('href') === `#${sectionId}`) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }
+
+            // 스크롤 이벤트 리스너
+            let ticking = false;
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        checkScroll();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            });
+
+            // 도트 클릭 이벤트
+            navDots.forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const targetId = dot.dataset.target;
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // 네비게이션 링크 클릭 이벤트
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // 초기 실행
+            checkScroll();
+        });
+    </script>
+</body>
+</html>
